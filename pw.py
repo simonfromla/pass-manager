@@ -51,13 +51,16 @@ def update():
     accFile = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
                    "info.txt"), "r+")
 
-    ACCOUNT_DATA = json.load(accFile)
+    ACCOUNT_DATA = json.load(accFile, strict=False)
     confirmUpdate = input("Update '{0}' with '{1}'?\n"
                           .format(sys.argv[1], sys.argv[2]))
     if confirmUpdate == "y":
         ACCOUNT_DATA.update({str(sys.argv[1]): sys.argv[2]})
+    else:
+        print("Not updated")
 
     accString = json.dumps(ACCOUNT_DATA)
+    accString.replace('“', '"')
     accFile.truncate(0)
     accFile.seek(0)
     accFile.write(accString)
@@ -69,7 +72,7 @@ def main():
 
     accFile = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
                    "info.txt"))
-    ACCOUNT_DATA = json.load(accFile)
+    ACCOUNT_DATA = json.load(accFile, strict=False)
     accFile.close()
 
     if len(sys.argv) < 2:
@@ -78,21 +81,37 @@ def main():
               'retrieve'.format(sys.argv[0]))
         sys.exit()
 
-    if len(sys.argv) == 2:
-        retrieve()
+# TO-DO
+# if len==3, and argv2==del, func()--> if argv1 in Dict, del. else "acc not exist"
+    elif len(sys.argv) == 3 and sys.argv[1] in ACCOUNT_DATA and sys.argv[2] == "del":
+        confirmDelete = input("Delete {}?".format(sys.argv[1]))
+        if confirmDelete == "y":
+            del ACCOUNT_DATA[sys.argv[1]]
+            with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                      "info.txt"), "r+") as accFile:
+                accString = json.dumps(ACCOUNT_DATA)
+                accFile.truncate(0)
+                accFile.seek(0)
+                accFile.write(accString)
+        else:
+            sys.exit()
 
-    if len(sys.argv) == 3 and not sys.argv[1] in ACCOUNT_DATA:
+    elif len(sys.argv) == 2:
+        retrieve()
+        sys.exit()
+
+    elif len(sys.argv) == 3 and not sys.argv[1] in ACCOUNT_DATA:
         addNew()
         sys.exit()
 
-    if len(sys.argv) == 3 and sys.argv[1] in ACCOUNT_DATA:
+    elif len(sys.argv) == 3 and sys.argv[1] in ACCOUNT_DATA:
         update()
         sys.exit()
 
-    if len(sys.argv) > 3:
+    elif len(sys.argv) > 3:
         print('Too many arguments passed. Try again.')
 
-    if sys.argv[1] == "ls":
+    elif sys.argv[1] == "ls":
         print("Usernames:")
         for key in ACCOUNT_DATA.keys():
             print("-", key)
