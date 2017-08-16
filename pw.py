@@ -15,14 +15,12 @@ def add_new():
                         '\ny or n\n'.format(new_acc=new_acc, new_pw=new_pw))
     if confirm_new == "y":
         ACCOUNT_DATA[new_acc] = new_pw
+        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                  "info.txt"), "r+") as acc_file:
+            json.dump(ACCOUNT_DATA, acc_file)
         print("You have added {} to your dictionary".format(new_acc))
     else:
         print("You have not added a new account")
-
-    acc_string = json.dumps(ACCOUNT_DATA, acc_file)
-    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-              "info.txt"), "r+") as acc_file:
-        acc_file.write(acc_string)
 
 
 def retrieve():
@@ -39,50 +37,43 @@ def retrieve():
 
 def update():
     print("An account with this name already exists.")
-    acc_file = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                    "info.txt"), "r+")
-    ACCOUNT_DATA = json.load(acc_file, strict=False)
     confirm_update = input('Update "{new_acc}" with "{new_pw}"?\n'
                            .format(new_acc=sys.argv[1], new_pw=sys.argv[2]))
     if confirm_update == "y":
-        ACCOUNT_DATA.update({str(sys.argv[1]): sys.argv[2]})
-        acc_string = json.dumps(ACCOUNT_DATA)
-        # acc_string.replace('“', '"')
-        acc_file.truncate(0)
-        acc_file.seek(0)
-        acc_file.write(acc_string)
-        acc_file.close()
-        print("{} has been updated.".format(sys.argv[1]))
+        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                  "info.txt"), "r+") as acc_file:
+            ACCOUNT_DATA = json.load(acc_file)
+            ACCOUNT_DATA.update({str(sys.argv[1]): sys.argv[2]})
+            acc_file.truncate(0)
+            acc_file.seek(0)
+            json.dump(ACCOUNT_DATA, acc_file)
+            print("{} has been updated.".format(sys.argv[1]))
     else:
         print("Not updated")
 
 
 def delete():
-    acc_file = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                    "info.txt"), "r+")
-    ACCOUNT_DATA = json.load(acc_file, strict=False)
-    if sys.argv[1] in ACCOUNT_DATA:
-        confirm_delete = input("Delete {}?\n".format(sys.argv[1]))
-        if confirm_delete == "y":
-            del ACCOUNT_DATA[sys.argv[1]]
-            acc_string = json.dumps(ACCOUNT_DATA)
-            acc_file.truncate(0)
-            acc_file.seek(0)
-            acc_file.write(acc_string)
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+              "info.txt"), "r+") as acc_file:
+        ACCOUNT_DATA = json.load(acc_file)
+        if sys.argv[1] in ACCOUNT_DATA:
+            confirm_delete = input("Delete {}?\n".format(sys.argv[1]))
+            if confirm_delete == "y":
+                del ACCOUNT_DATA[sys.argv[1]]
+                acc_file.truncate(0)
+                acc_file.seek(0)
+                json.dump(ACCOUNT_DATA, acc_file)
+                print("{} has been removed from the dictionary.".format
+                      (sys.argv[1]))
+        else:
+            print("Account does not exist. Did not delete.")
             acc_file.close()
-            print("{} has been removed from the dictionary.".format
-                  (sys.argv[1]))
-    else:
-        print("Account does not exist. Did not delete.")
-        acc_file.close()
 
 
 def main():
-    acc_file = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                    "info.txt"))
-    ACCOUNT_DATA = json.load(acc_file, strict=False)
-    acc_file.close()
-
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+              "info.txt")) as acc_file:
+        ACCOUNT_DATA = json.load(acc_file)
     if len(sys.argv) < 2:
         print('usage: python3 {} account - copy account '
               'password\naccount: name of account whose pw to '
