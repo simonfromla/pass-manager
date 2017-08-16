@@ -1,3 +1,4 @@
+import argparse
 import json
 import pyperclip
 import os
@@ -78,6 +79,17 @@ def delete():
 
 
 def main():
+        # parser = argparse.ArgumentParser(
+        #                                  usage='%(prog)s [options]',
+        #                                  description='A simple password retriever'
+        #                                  )
+        # parser.add_argument('--foo', help='foo of the %(prog)s program')
+        # parser.add_argument('bar', nargs='+', help='bar help')
+        #
+        # parser.print_help()
+        #
+        # args = parser.parse_args()
+        # print(args.bar)
     acc_file = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
                     "info.txt"))
     ACCOUNT_DATA = json.load(acc_file, strict=False)
