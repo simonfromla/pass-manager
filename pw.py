@@ -86,7 +86,6 @@ def main():
               'password\naccount: name of account whose pw to '
               'retrieve'.format(sys.argv[0]))
         sys.exit()
-
     elif num_args == 2:
         if sys.argv[1] == "ls":
             print("Usernames:")
@@ -95,7 +94,6 @@ def main():
         else:
             retrieve()
             sys.exit()
-
     elif num_args == 3:
         if sys.argv[1] == "del":
             delete()
@@ -106,7 +104,6 @@ def main():
         elif sys.argv[1] in ACCOUNT_DATA:
             update()
             sys.exit()
-
     else:
         print('Too many arguments passed. Try again.')
 
