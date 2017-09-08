@@ -22,7 +22,7 @@ def add_new():
             json.dump(ACCOUNT_DATA, acc_file)
         print("You have added '{}' to your dictionary".format(new_acc))
     else:
-        print("You have not added a new account")
+        print("You have not added a new account.")
 
 
 def retrieve():
@@ -35,7 +35,7 @@ def retrieve():
         pyperclip.copy(ACCOUNT_DATA[account])
         print("Password for '{}' copied to clipboard.".format(account))
     else:
-        print("There is no account named '{}'".format(account))
+        print("There is no account named '{}'.".format(account))
 
 
 def update():
@@ -53,7 +53,7 @@ def update():
             json.dump(ACCOUNT_DATA, acc_file)
             print("'{}' has been updated.".format(sys.argv[1]))
     else:
-        print("Not updated")
+        print("Not updated.")
 
 
 def delete():
@@ -84,7 +84,7 @@ def main():
     if num_args < 2:
         print('usage: python3 {} account - copy account '
               'password\naccount: name of account whose pw to '
-              'retrieve'.format(sys.argv[0]))
+              'retrieve'.format(__file__))
         sys.exit()
     elif num_args == 2:
         if sys.argv[1] == "ls":
