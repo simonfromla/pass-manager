@@ -1,3 +1,4 @@
+import argparse
 import json
 import pyperclip
 import os
@@ -5,6 +6,7 @@ import sys
 
 
 def add_new():
+    """Add a new account and pass combination into the dictionary"""
     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
               "info.txt")) as acc_file:
         ACCOUNT_DATA = json.load(acc_file)
@@ -24,6 +26,7 @@ def add_new():
 
 
 def retrieve():
+    """Retrieve the value for a given account and copy it to the clipboard"""
     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
               "info.txt")) as acc_file:
         ACCOUNT_DATA = json.load(acc_file)
@@ -36,6 +39,7 @@ def retrieve():
 
 
 def update():
+    """Update an existing account with a new value"""
     print("An account with this name already exists.")
     confirm_update = input('Update "{new_acc}" with "{new_pw}"?\n'
                            .format(new_acc=sys.argv[1], new_pw=sys.argv[2]))
@@ -53,6 +57,7 @@ def update():
 
 
 def delete():
+    """Delete the given account from the dictionary"""
     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
               "info.txt"), "r+") as acc_file:
         ACCOUNT_DATA = json.load(acc_file)
@@ -67,13 +72,13 @@ def delete():
                       (sys.argv[1]))
         else:
             print("Account does not exist. Did not delete.")
-            acc_file.close()
 
 
 def main():
     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
               "info.txt")) as acc_file:
         ACCOUNT_DATA = json.load(acc_file)
+
     if len(sys.argv) < 2:
         print('usage: python3 {} account - copy account '
               'password\naccount: name of account whose pw to '
