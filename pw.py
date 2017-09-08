@@ -6,6 +6,7 @@ import sys
 
 
 def add_new():
+    """Add a new account and pass combination into the dictionary"""
     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
               "info.txt")) as acc_file:
         ACCOUNT_DATA = json.load(acc_file)
@@ -27,6 +28,7 @@ def add_new():
 
 
 def retrieve():
+    """Retrieve the value for a given account and copy it to the clipboard"""
     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
               "info.txt")) as acc_file:
         ACCOUNT_DATA = json.load(acc_file)
@@ -39,6 +41,7 @@ def retrieve():
 
 
 def update():
+    """Update an existing account with a new value"""
     print("An account with this name already exists.")
     acc_file = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
                     "info.txt"), "r+")
@@ -59,6 +62,7 @@ def update():
 
 
 def delete():
+    """Delete the given account from the dictionary"""
     acc_file = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
                     "info.txt"), "r+")
     ACCOUNT_DATA = json.load(acc_file, strict=False)
