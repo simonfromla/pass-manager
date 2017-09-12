@@ -11,7 +11,7 @@ Beside the main program, a file named `info.txt` initialized with an empty dicti
 - `python pw.py accountName hint/password` to add a new accountName and hint or password entry into `info.txt`
 - `python pw.py accountName` to retrieve the accountName's info and copy to clipboard
 - `python pw.py ls` to list all accountNames (dictionary keys).
-- `python pw.py accountName del` to delete the accountName
+- `python pw.py del accountName` to delete the accountName
 
 
 **_Useful tip:_** to avoid typing `python pw.py` into the command line every time, I suggest you add the /path/to/the/mainFile to your $PATH variable.  
