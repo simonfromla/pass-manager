@@ -17,23 +17,21 @@ def load_manager(fp=None):
         acc_dict = json.load(file)
     return acc_dict
 
+
 def write_to_file(data, fp=None):
     """json-serializes data and writes it to filepath."""
     if fp is None:
         fp = DEFAULT_LOCATION
-    # maybe write to a temp file first here, then move it instead
     with open(fp, 'w') as file:
         file.truncate(0)
         json.dump(data, file)
         # file.seek(0)
 
+
 def add_new(account, new_value, fp=None):
     """Add a new account and pass combination into the dictionary"""
     account_dict = load_manager(fp)
-    # if account in account_dict:
-    #     raise ValueError("Account {} is already a managed account. Use update instead.".format(account))
     account_dict[account] = new_value
-
     try:
         write_to_file(account_dict, fp)
         print("Saved new entry!")
@@ -54,7 +52,7 @@ def retrieve(account, fp=None):
 def update(account, new_value, fp=None):
     """Update an existing account with a new value"""
     account_dict = load_manager(fp)
-    account_dict.update({account:new_value})
+    account_dict.update({account: new_value})
 
     try:
         write_to_file(account_dict, fp)
@@ -83,6 +81,7 @@ def main():
               'value\naccount: name of account whose value to '
               'retrieve'.format(__file__))
         sys.exit()
+
     elif num_args == 2:
         # List
         if sys.argv[1] == "ls":
@@ -92,11 +91,13 @@ def main():
         else:
             retrieve(sys.argv[1])
             sys.exit()
+
     elif num_args == 3:
         if sys.argv[1] == "del":
             # Delete
             if sys.argv[2] in account_dict:
-                confirm_delete = input("Delete '{}'?\n(y/n)\n".format(sys.argv[2]))
+                confirm_delete = input("Delete '{}'?\n(y/n)\n".format(
+                    sys.argv[2]))
                 if confirm_delete == "y":
                     delete(sys.argv[2])
                     sys.exit()
@@ -107,8 +108,9 @@ def main():
 
         elif sys.argv[1] not in account_dict:
             # Add new
-            confirm_new = input('Add "{new_acc}" with "{new_val}" to the dictionary?'
-                    '\n(y/n)\n'.format(new_acc=sys.argv[1], new_val=sys.argv[2]))
+            confirm_new = input('Add "{new_acc}" with "{new_val}" to the '
+                                'dictionary?\n(y/n)\n'.format(
+                                    new_acc=sys.argv[1], new_val=sys.argv[2]))
             if confirm_new == "y":
                 add_new(sys.argv[1], sys.argv[2])
                 sys.exit()
@@ -117,7 +119,9 @@ def main():
             # Update
             print("An account with this name already exists.")
             confirm_update = input('Update "{new_acc}" with "{new_val}"?\n'
-                                   '(y/n)\n'.format(new_acc=sys.argv[1], new_val=sys.argv[2]))
+                                   '(y/n)\n'.format(
+                                       new_acc=sys.argv[1],
+                                       new_val=sys.argv[2]))
             if confirm_update == "y":
                 update(sys.argv[1], sys.argv[2])
                 sys.exit()
