@@ -22,6 +22,7 @@ def write_to_file(data, fp=None):
     """json-serializes data and writes it to filepath."""
     if fp is None:
         fp = DEFAULT_LOCATION
+    # maybe write to a temp file first here, then move it instead
     with open(fp, 'w') as file:
         file.truncate(0)
         json.dump(data, file)
@@ -31,6 +32,9 @@ def write_to_file(data, fp=None):
 def add_new(account, new_value, fp=None):
     """Add a new account and pass combination into the dictionary"""
     account_dict = load_manager(fp)
+    # if account in account_dict:
+    #     raise ValueError("Account {} is already a managed account."
+    #                       "Use update instead.".format(account))
     account_dict[account] = new_value
     try:
         write_to_file(account_dict, fp)
@@ -86,8 +90,8 @@ def main():
         # List
         if sys.argv[1] == "ls":
             print("Usernames:")
-            for key in account_dict:
-                print("-", key)
+            {print("- {}".format(key)) for key in sorted(account_dict)}
+            # [print("-", elem) for elem in sorted_list]
         else:
             retrieve(sys.argv[1])
             sys.exit()
