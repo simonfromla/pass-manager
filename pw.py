@@ -91,7 +91,6 @@ def main():
         if sys.argv[1] == "ls":
             print("Usernames:")
             {print("- {}".format(key)) for key in sorted(account_dict)}
-            # [print("-", elem) for elem in sorted_list]
         else:
             retrieve(sys.argv[1])
             sys.exit()
