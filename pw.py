@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from cryptography.fernet import Fernet
 import json
 import pyperclip
 import os
@@ -6,6 +7,19 @@ import sys
 
 DEFAULT_LOCATION = os.environ.get('INFO_LOCATION') or os.path.join(
     os.path.abspath(os.path.dirname(__file__)), "info.txt")
+
+
+def encrypt(pw):
+    key = Fernet.generate_key()
+    f = Fernet(key)
+    token = f.encrypt(bytes(pw))
+    return token
+
+
+def decrypt(token):
+    key = Fernet.generate_key()
+    f = Fernet(key)
+    return f.decrypt(token)
 
 
 def load_manager(fp=None):
