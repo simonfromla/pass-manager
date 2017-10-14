@@ -1,10 +1,10 @@
-#!/usr/bin/env python
-from copy import deepcopy
-from cryptography.fernet import Fernet
+#!/usr/bin/env python3
 import json
 import pyperclip
 import os
 import sys
+from copy import deepcopy
+from cryptography.fernet import Fernet
 
 # DEFAULT_LOCATION = os.environ.get('INFO_LOCATION') or os.path.join(
 #     os.path.abspath(os.path.dirname(__file__)), "info.txt")
@@ -18,6 +18,7 @@ def encrypt(pw, f):
 def decrypt(token, f):
     return f.decrypt(token)
 
+
 def initialize():
     with open("storage.json", "w") as file:
         if os.stat("storage.json").st_size == 0:
@@ -27,9 +28,10 @@ def initialize():
 
 def load_manager():
     with open("storage.json", "r") as file:
-        shallow_storage = json.load(file)
+        storage = json.load(file)
         # print(type(shallow_storage))
-        return shallow_storage
+        return storage
+
 
 def write_to_file(data, fp=None):
     """json-serializes data and writes it to filepath."""
@@ -44,14 +46,12 @@ def write_to_file(data, fp=None):
 
 def add_new(account, new_value, f, fp=None):
     """Add a new account and pass combination into the dictionary"""
-    account_dict = load_manager()
-    # if account in account_dict:
-    #     raise ValueError("Account {} is already a managed account."
-    #                       "Use update instead.".format(account))
+    storage = load_manager()
 
-    account_dict["accounts"].append({account: encrypt(new_value, f).decode("utf-8")})
+    storage["accounts"].append({account: encrypt(
+                                    new_value, f).decode("utf-8")})
     try:
-        write_to_file(account_dict, fp)
+        write_to_file(storage, fp)
         print("Saved new entry!")
     except Exception as e:
         print("Something went wrong: {}".format(e))
@@ -74,15 +74,15 @@ def retrieve(account, f, fp=None):
 
 def update(account, new_value, f, fp=None):
     """Update an existing account with a new value"""
-    account_dict = load_manager()
+    storage = load_manager()
     new_enc_val = encrypt(new_value, f)
     enc_str = new_enc_val.decode("utf-8")
-    for i in account_dict["accounts"]:
+    for i in storage["accounts"]:
         if account in i:
             i[account] = enc_str
 
     try:
-        write_to_file(account_dict, fp)
+        write_to_file(storage, fp)
         print("Updated the entry!")
     except Exception as e:
         print("Something went wrong: {}".format(e))
@@ -90,29 +90,30 @@ def update(account, new_value, f, fp=None):
 
 def delete(account, fp=None):
     """Delete the given account from the dictionary"""
-    account_dict = load_manager()
-    for i in account_dict["accounts"]:
-        if account in i:
-            del i[account]
-            print(account_dict)
+    storage = load_manager()
+    # for i in storage["accounts"]:
+    #     if account in i:
+    #         del i[account]
+    #         print(storage) # leaves an empty dict {}
+    # for i in json_dict["bottom_key"][:]:  # important: iterate a shallow copy
+    #     if list_dict in i:
+    #         json_dict["bottom_key"].remove(i)
+    storage["accounts"] = [d for d in storage["accounts"]
+                                if account not in d] # reconstruct the dicts
     try:
-        write_to_file(account_dict, fp)
+        write_to_file(storage, fp)
         print("'{}' has been removed from the dictionary.".format(
             account))
     except Exception as e:
         print("Something went wrong: {}".format(e))
 
 
-def exist_in_storage(arg, account_dict):
-    try:
-        if account_dict["accounts"]:
-            for i in account_dict["accounts"]:
-                if arg in i:
-                    return True
-        return False
-
-    except KeyError as e:
-        print("ERROR accounts[] doesnt exist")
+def exist_in_storage(arg, storage):
+    if storage["accounts"]:
+        for i in storage["accounts"]:
+            if arg in i:
+                return True
+    return False
 
 
 def initialize_storage():
@@ -126,14 +127,22 @@ def initialize_storage():
     return f
 
 
+def ls(storage):
+    print("*****Usernames*****")
+    sorted_list = sorted([list(i.keys())[0] for i in storage["accounts"]])
+    for a in sorted_list:
+        print(" -", a)
+
+
+
 def main():
     if not os.path.exists("storage.json"):
         initialize()
         f = initialize_storage()
-        account_dict = load_manager()
+        storage = load_manager()
     else:
-        account_dict = load_manager()
-        key = account_dict["key"]
+        storage = load_manager()
+        key = storage["key"]
         bytes(key, "utf-8")
         f = Fernet(key)
 
@@ -148,8 +157,7 @@ def main():
     elif num_args == 2:
         # List
         if sys.argv[1] == "ls":
-            print("Usernames:")
-            {print("- {}".format(key)) for key in sorted(account_dict)}
+            ls(storage)
         else:
             retrieve(sys.argv[1], f)
             sys.exit()
@@ -158,7 +166,7 @@ def main():
     elif num_args == 3:
         if sys.argv[1] == "del":
             # Delete
-            if exist_in_storage(sys.argv[2], account_dict):
+            if exist_in_storage(sys.argv[2], storage):
                 confirm_delete = input("Delete '{}'?\n(y/n)\n".format(
                     sys.argv[2]))
                 if confirm_delete == "y":
@@ -170,7 +178,7 @@ def main():
                 print("{} does not exist. Did not delete.".format(sys.argv[2]))
 
         # Add new
-        elif not exist_in_storage(sys.argv[1], account_dict):
+        elif not exist_in_storage(sys.argv[1], storage):
             # Add new
             confirm_new = input('Add "{new_acc}" with "{new_val}" to the '
                                 'dictionary?\n(y/n)\n'.format(
@@ -180,7 +188,7 @@ def main():
                 # sys.exit()
 
         # Update
-        elif exist_in_storage(sys.argv[1], account_dict):
+        elif exist_in_storage(sys.argv[1], storage):
             print("An account with this name already exists.")
             confirm_update = input('Update "{new_acc}" with "{new_val}"?\n'
                                    '(y/n)\n'.format(
