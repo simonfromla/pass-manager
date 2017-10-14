@@ -1,10 +1,10 @@
-#!/usr/bin/env python
-from copy import deepcopy
-from cryptography.fernet import Fernet
+#!/usr/bin/env python3
 import json
 import pyperclip
 import os
 import sys
+from copy import deepcopy
+from cryptography.fernet import Fernet
 
 # DEFAULT_LOCATION = os.environ.get('INFO_LOCATION') or os.path.join(
 #     os.path.abspath(os.path.dirname(__file__)), "info.txt")
@@ -18,6 +18,7 @@ def encrypt(pw, f):
 def decrypt(token, f):
     return f.decrypt(token)
 
+
 def initialize():
     with open("storage.json", "w") as file:
         if os.stat("storage.json").st_size == 0:
@@ -30,6 +31,7 @@ def load_manager():
         shallow_storage = json.load(file)
         # print(type(shallow_storage))
         return shallow_storage
+
 
 def write_to_file(data, fp=None):
     """json-serializes data and writes it to filepath."""
@@ -45,11 +47,9 @@ def write_to_file(data, fp=None):
 def add_new(account, new_value, f, fp=None):
     """Add a new account and pass combination into the dictionary"""
     account_dict = load_manager()
-    # if account in account_dict:
-    #     raise ValueError("Account {} is already a managed account."
-    #                       "Use update instead.".format(account))
 
-    account_dict["accounts"].append({account: encrypt(new_value, f).decode("utf-8")})
+    account_dict["accounts"].append({account: encrypt(
+                                    new_value, f).decode("utf-8")})
     try:
         write_to_file(account_dict, fp)
         print("Saved new entry!")
@@ -109,15 +109,11 @@ def delete(account, fp=None):
 
 
 def exist_in_storage(arg, account_dict):
-    try:
-        if account_dict["accounts"]:
-            for i in account_dict["accounts"]:
-                if arg in i:
-                    return True
-        return False
-
-    except KeyError as e:
-        print("ERROR accounts[] doesnt exist")
+    if account_dict["accounts"]:
+        for i in account_dict["accounts"]:
+            if arg in i:
+                return True
+    return False
 
 
 def initialize_storage():
@@ -132,14 +128,12 @@ def initialize_storage():
 
 
 def ls(account_dict):
-    print("Usernames:")
-    # for a in account_dict["accounts"]:
-    #     print("-", list(a.keys()))
-    print(account_dict.keys())
-    for a in list(account_dict["accounts"]):
-        print(a.keys())
+    print("*****Usernames*****")
+    sorted_list = sorted([list(i.keys())[0] for i in account_dict["accounts"]])
+    for a in sorted_list:
+        print(" -", a)
 
-    # {print("- {}".format(key)) for key in sorted(account_dict)}
+
 
 def main():
     if not os.path.exists("storage.json"):
