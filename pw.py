@@ -33,6 +33,7 @@ def load_manager():
         return storage
 
 
+
 def write_to_file(data, fp=None):
     """json-serializes data and writes it to filepath."""
     # if fp is None:
@@ -46,6 +47,7 @@ def write_to_file(data, fp=None):
 
 def add_new(account, new_value, f, fp=None):
     """Add a new account and pass combination into the dictionary"""
+
     storage = load_manager()
 
     storage["accounts"].append({account: encrypt(
@@ -90,6 +92,7 @@ def update(account, new_value, f, fp=None):
 
 def delete(account, fp=None):
     """Delete the given account from the dictionary"""
+
     storage = load_manager()
     # for i in storage["accounts"]:
     #     if account in i:
@@ -106,6 +109,7 @@ def delete(account, fp=None):
             account))
     except Exception as e:
         print("Something went wrong: {}".format(e))
+
 
 
 def exist_in_storage(arg, storage):
@@ -125,6 +129,7 @@ def initialize_storage():
     storage["accounts"] = []
     write_to_file(storage)
     return f
+
 
 
 def ls(storage):
