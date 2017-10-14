@@ -70,8 +70,11 @@ def retrieve(account, f, fp=None):
 def update(account, new_value, f, fp=None):
     """Update an existing account with a new value"""
     account_dict = load_manager()
-    encrypt(new_value, f)
-    account_dict.update({account: new_value})
+    new_enc_val = encrypt(new_value, f)
+    enc_str = new_enc_val.decode("utf-8")
+    for i in account_dict["accounts"]:
+        if account in i:
+            i[account] = enc_str
 
     try:
         write_to_file(account_dict, fp)
@@ -82,8 +85,11 @@ def update(account, new_value, f, fp=None):
 
 def delete(account, fp=None):
     """Delete the given account from the dictionary"""
-    account_dict = load_manager(fp)
-    del account_dict[account]
+    account_dict = load_manager()
+    for i in account_dict["accounts"]:
+        if account in i:
+            del i[account]
+            print(account_dict)
     try:
         write_to_file(account_dict, fp)
         print("'{}' has been removed from the dictionary.".format(
@@ -127,7 +133,7 @@ def main():
     elif num_args == 3:
         if sys.argv[1] == "del":
             # Delete
-            if sys.argv[2] in account_dict:
+            if exist_in_storage(sys.argv[2], account_dict):
                 confirm_delete = input("Delete '{}'?\n(y/n)\n".format(
                     sys.argv[2]))
                 if confirm_delete == "y":
