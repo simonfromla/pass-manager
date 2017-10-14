@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from copy import deepcopy
 from cryptography.fernet import Fernet
 import json
 import pyperclip
@@ -17,14 +18,18 @@ def encrypt(pw, f):
 def decrypt(token, f):
     return f.decrypt(token)
 
-
-def load_manager():
-    with open("storage.json", "a+") as file:
+def initialize():
+    with open("storage.json", "w") as file:
         if os.stat("storage.json").st_size == 0:
             file.write("{}")
-        file.seek(0)
-        storage = json.load(file)
-        return storage
+    return
+
+
+def load_manager():
+    with open("storage.json", "r") as file:
+        shallow_storage = json.load(file)
+        # print(type(shallow_storage))
+        return shallow_storage
 
 def write_to_file(data, fp=None):
     """json-serializes data and writes it to filepath."""
@@ -99,21 +104,41 @@ def delete(account, fp=None):
 
 
 def exist_in_storage(arg, account_dict):
-    for i in account_dict["accounts"]:
-        if arg in i:
-            return True
-    return False
+    try:
+        if account_dict["accounts"]:
+            for i in account_dict["accounts"]:
+                if arg in i:
+                    return True
+        return False
+
+    except KeyError as e:
+        print("ERROR accounts[] doesnt exist")
+
+
+def initialize_storage():
+    storage = load_manager()
+    key = Fernet.generate_key()
+    f = Fernet(key)
+    key = key.decode("utf-8")
+    storage["key"] = key
+    storage["accounts"] = []
+    write_to_file(storage)
+    return f
 
 
 def main():
-    account_dict = load_manager()
-    if not account_dict["key"]:
-        key = Fernet.generate_key()
+    if not os.path.exists("storage.json"):
+        initialize()
+        f = initialize_storage()
+        account_dict = load_manager()
     else:
+        account_dict = load_manager()
         key = account_dict["key"]
         bytes(key, "utf-8")
         f = Fernet(key)
+
     num_args = len(sys.argv)
+
     if num_args < 2:
         print('usage: python3 {} account - copy corresponding account '
               'value\naccount: name of account whose value to '
@@ -145,7 +170,6 @@ def main():
                 print("{} does not exist. Did not delete.".format(sys.argv[2]))
 
         # Add new
-        # elif sys.argv[1] not in [print(key) for key in account_dict["accounts"]]:
         elif not exist_in_storage(sys.argv[1], account_dict):
             # Add new
             confirm_new = input('Add "{new_acc}" with "{new_val}" to the '
@@ -169,8 +193,6 @@ def main():
                 print("Not updated.")
     else:
         print('Too many arguments passed. Try again.')
-
-
 
 
 if __name__ == "__main__":
