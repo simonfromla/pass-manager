@@ -91,10 +91,15 @@ def update(account, new_value, f, fp=None):
 def delete(account, fp=None):
     """Delete the given account from the dictionary"""
     account_dict = load_manager()
-    for i in account_dict["accounts"]:
-        if account in i:
-            del i[account]
-            print(account_dict)
+    # for i in account_dict["accounts"]:
+    #     if account in i:
+    #         del i[account]
+    #         print(account_dict) # leaves an empty dict {}
+    # for i in json_dict["bottom_key"][:]:  # important: iterate a shallow copy
+    #     if list_dict in i:
+    #         json_dict["bottom_key"].remove(i)
+    account_dict["accounts"] = [d for d in account_dict["accounts"]
+                                if account not in d] # reconstruct the dicts
     try:
         write_to_file(account_dict, fp)
         print("'{}' has been removed from the dictionary.".format(
@@ -126,6 +131,16 @@ def initialize_storage():
     return f
 
 
+def ls(account_dict):
+    print("Usernames:")
+    # for a in account_dict["accounts"]:
+    #     print("-", list(a.keys()))
+    print(account_dict.keys())
+    for a in list(account_dict["accounts"]):
+        print(a.keys())
+
+    # {print("- {}".format(key)) for key in sorted(account_dict)}
+
 def main():
     if not os.path.exists("storage.json"):
         initialize()
@@ -148,8 +163,7 @@ def main():
     elif num_args == 2:
         # List
         if sys.argv[1] == "ls":
-            print("Usernames:")
-            {print("- {}".format(key)) for key in sorted(account_dict)}
+            ls(account_dict)
         else:
             retrieve(sys.argv[1], f)
             sys.exit()
