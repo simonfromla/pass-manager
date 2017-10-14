@@ -1,19 +1,13 @@
 # pass-manager
-A simple password manager. Store and retrieve passwords or password hints through the command line.
-Copies password or password hint directly to the clipboard.  
-
-
-#### Warning:
-Store hints for value instead of an actual password for optimum security. Encryption is not provided. Store passwords in plain text at your own risk.
-
+A simple password manager. Store and retrieve passwords through the command line without having your passwords written in plain text.
+Encryption obfuscates your passwords. Copies password directly to the clipboard.  
 
 
 #### Usage:
-Beside the main program, a file named `info.txt` initialized with an empty dictionary, '{}', must exist.
-
+Run the main program __pw.py__ and it will create and initialize __storage.json__ for you. __storage.json__ contains the key necessary to decrypt your passwords, as well as a dictionary of your account names + encrypted passwords.  
 
 **Commands:**
-- `python pw.py accountName hint/password` to add a new accountName and hint or password entry into `info.txt`
+- `python pw.py accountName hint/password` to add a new accountName and hint or password entry into __storage.json__
 - `python pw.py accountName` to retrieve the accountName's info and copy to clipboard
 - `python pw.py ls` to list all accountNames (dictionary keys).
 - `python pw.py del accountName` to delete the accountName
