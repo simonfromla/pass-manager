@@ -29,9 +29,7 @@ def initialize():
 def load_manager():
     with open("storage.json", "r") as file:
         storage = json.load(file)
-        # print(type(shallow_storage))
         return storage
-
 
 
 def write_to_file(data, fp=None):
@@ -51,7 +49,7 @@ def add_new(account, new_value, f, fp=None):
     storage = load_manager()
 
     storage["accounts"].append({account: encrypt(
-                                    new_value, f).decode("utf-8")})
+                                new_value, f).decode("utf-8")})
     try:
         write_to_file(storage, fp)
         print("Saved new entry!")
@@ -70,6 +68,7 @@ def retrieve(account, f, fp=None):
                 decrypted_pw_bytes = decrypt(token, f)
                 pyperclip.copy(decrypted_pw_bytes.decode("utf-8"))
                 print("Value for '{}' copied to clipboard.".format(account))
+                return pyperclip.paste()
     else:
         print("There is no account named '{}'.".format(account))
 
@@ -102,14 +101,13 @@ def delete(account, fp=None):
     #     if list_dict in i:
     #         json_dict["bottom_key"].remove(i)
     storage["accounts"] = [d for d in storage["accounts"]
-                                if account not in d] # reconstruct the dicts
+                           if account not in d]  # reconstruct dict
     try:
         write_to_file(storage, fp)
         print("'{}' has been removed from the dictionary.".format(
             account))
     except Exception as e:
         print("Something went wrong: {}".format(e))
-
 
 
 def exist_in_storage(arg, storage):
@@ -131,13 +129,11 @@ def initialize_storage():
     return f
 
 
-
 def ls(storage):
     print("*****Usernames*****")
     sorted_list = sorted([list(i.keys())[0] for i in storage["accounts"]])
     for a in sorted_list:
         print(" -", a)
-
 
 
 def main():
