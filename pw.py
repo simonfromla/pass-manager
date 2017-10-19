@@ -43,10 +43,8 @@ def write_to_file(data, fp=None):
         # file.seek(0)
 
 
-def add_new(account, new_value, f, fp=None):
+def add_new(account, new_value, storage, f, fp=None):
     """Add a new account and pass combination into the dictionary"""
-
-    storage = load_manager()
 
     storage["accounts"].append({account: encrypt(
                                 new_value, f).decode("utf-8")})
@@ -57,9 +55,8 @@ def add_new(account, new_value, f, fp=None):
         print("Something went wrong: {}".format(e))
 
 
-def retrieve(account, f, fp=None):
+def retrieve(account, storage, f, fp=None):
     """Retrieve the value for a given account and copy it to the clipboard"""
-    storage = load_manager()
     if exist_in_storage(account, storage):
         for accounts in storage["accounts"]:
             if account in accounts:
@@ -73,9 +70,8 @@ def retrieve(account, f, fp=None):
         print("There is no account named '{}'.".format(account))
 
 
-def update(account, new_value, f, fp=None):
+def update(account, new_value, storage, f, fp=None):
     """Update an existing account with a new value"""
-    storage = load_manager()
     new_enc_val = encrypt(new_value, f)
     enc_str = new_enc_val.decode("utf-8")
     for i in storage["accounts"]:
@@ -89,10 +85,9 @@ def update(account, new_value, f, fp=None):
         print("Something went wrong: {}".format(e))
 
 
-def delete(account, fp=None):
+def delete(account, storage, fp=None):
     """Delete the given account from the dictionary"""
 
-    storage = load_manager()
     # for i in storage["accounts"]:
     #     if account in i:
     #         del i[account]
@@ -163,7 +158,7 @@ def main():
         if sys.argv[1] == "ls":
             ls(storage)
         else:
-            retrieve(sys.argv[1], f)
+            retrieve(sys.argv[1], storage, f)
             sys.exit()
 
     # Delete
@@ -174,7 +169,7 @@ def main():
                 confirm_delete = input("Delete '{}'?\n(y/n)\n".format(
                     sys.argv[2]))
                 if confirm_delete == "y":
-                    delete(sys.argv[2])
+                    delete(sys.argv[2], storage)
                     sys.exit()
                 else:
                     print("Did not delete.")
@@ -188,7 +183,7 @@ def main():
                                 'dictionary?\n(y/n)\n'.format(
                                     new_acc=sys.argv[1], new_val=sys.argv[2]))
             if confirm_new == "y":
-                add_new(sys.argv[1], sys.argv[2], f)
+                add_new(sys.argv[1], sys.argv[2], storage, f)
                 # sys.exit()
 
         # Update
@@ -199,7 +194,7 @@ def main():
                                        new_acc=sys.argv[1],
                                        new_val=sys.argv[2]))
             if confirm_update == "y":
-                update(sys.argv[1], sys.argv[2], f)
+                update(sys.argv[1], sys.argv[2], storage, f)
                 sys.exit()
             else:
                 print("Not updated.")
