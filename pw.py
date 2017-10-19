@@ -111,6 +111,9 @@ def delete(account, fp=None):
 
 
 def exist_in_storage(arg, storage):
+    for i in storage:
+        if arg in storage:
+            return True
     if storage["accounts"]:
         for i in storage["accounts"]:
             if arg in i:
