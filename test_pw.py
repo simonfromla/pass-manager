@@ -11,7 +11,7 @@ class TestPw(unittest.TestCase):
     def setUp(self):
         """Call initialize() to create a JSON object. Assert to check
         initialization functions before running other tests.
-        Return "f" for testing the following methods' encryption."""
+        Return "f", "storage" for testing the following methods' encryption."""
 
         # Assert initialize() working as expected
         pw.initialize()
@@ -57,7 +57,8 @@ class TestPw(unittest.TestCase):
         pw.retrieve("test_retrieve_account", self.storage, self.f)
         self.assertEqual(pyperclip.paste(), "test_value")
 
-        pw.add_new("test_retrieve_account1", "test_value1", self.storage, self.f)
+        pw.add_new("test_retrieve_account1", "test_value1", self.storage,
+                   self.f)
         pw.retrieve("test_retrieve_account1", self.storage, self.f)
         self.assertEqual(pyperclip.paste(), "test_value1")
 
@@ -66,7 +67,8 @@ class TestPw(unittest.TestCase):
         the new value. Assert that the retrieved value copied to the clipboard
         has been updated with the newer value."""
         pw.add_new("test_update_account", "test_value", self.storage, self.f)
-        pw.update("test_update_account", "new_test_value", self.storage, self.f)
+        pw.update("test_update_account", "new_test_value", self.storage,
+                  self.f)
         pw.retrieve("test_update_account", self.storage, self.f)
         self.assertEqual(pyperclip.paste(), "new_test_value")
 
